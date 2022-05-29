@@ -1,27 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todoey_app/bloc/addtask_bloc.dart';
 import 'package:todoey_app/widgets/task_tile.dart';
-import 'package:provider/provider.dart';
-import 'package:todoey_app/models/tasks_data.dart';
 
-class TaskList extends StatelessWidget {
+class TaskList extends StatefulWidget {
+  @override
+  State<TaskList> createState() => _TaskListState();
+}
+
+class _TaskListState extends State<TaskList> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<TaskData>(builder: (context, taskdata, child) {
-      return ListView.builder(
-          itemBuilder: (context, index) {
-            final task = taskdata.tasks[index];
-            return TaskTile(
-              isChecked: task.isDone,
-              Tasktitle: task.name,
-              checkboxcallback: (checkboxstate) {
-                taskdata.updatetask(task);
-              },
-              longpresscallback: () {
-                taskdata.deletetask(task);
-              },
-            );
-          },
-          itemCount: taskdata.taskcount);
+    return BlocBuilder<AddtaskBloc, AddtaskState>(builder: (context, state) {
+      if (state is TaskAdded) {
+        return ListView.builder(
+            itemBuilder: (context, index) {
+              final taskdata = state.tasks[index];
+              return TaskTile(
+                isChecked: taskdata.isDone,
+                Tasktitle: taskdata.name,
+                checkboxcallback: (checkboxstate) {
+                  context.read<AddtaskBloc>().add(updatetask(task: taskdata));
+                },
+                longpresscallback: () {
+                  context.read<AddtaskBloc>().add(deletetask(task: taskdata));
+                },
+              );
+            },
+            itemCount: state.taskcount);
+      } else {
+        return Center(
+          child: Text(
+            'Press " + " to add your first task',
+            style: TextStyle(fontSize: 20.0),
+          ),
+        );
+      }
     });
   }
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todoey_app/bloc/addtask_bloc.dart';
 import 'package:todoey_app/widgets/task_list.dart';
 import 'package:todoey_app/screens/add_task.dart';
-import 'package:provider/provider.dart';
-import 'package:todoey_app/models/tasks_data.dart';
 
 class TasksScreen extends StatelessWidget {
   @override
@@ -55,26 +55,47 @@ class TasksScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 5.0),
-                Text(
-                  '${Provider.of<TaskData>(context).taskcount} Tasks',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.white,
-                  ),
+                BlocBuilder<AddtaskBloc, AddtaskState>(
+                  builder: (context, state) {
+                    if (state is TaskAdded) {
+                      return Text(
+                        '${state.taskcount} Tasks',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                        ),
+                      );
+                    } else {
+                      return Text(
+                        '0 Tasks',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                        ),
+                      );
+                    }
+                  },
                 ),
               ],
             ),
           ),
           Expanded(
+            flex: 9,
             child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(20.0),
-                  topLeft: Radius.circular(20.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(20.0),
+                    topLeft: Radius.circular(20.0),
+                  ),
                 ),
-              ),
-              child: TaskList(),
+                child: TaskList()),
+          ),
+          Expanded(
+            flex: 1,
+            child: Container(
+              height: 100,
+              color: Colors.white,
             ),
           )
         ],

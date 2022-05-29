@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todoey_app/models/tasks_data.dart';
+import 'package:todoey_app/bloc/addtask_bloc.dart';
 
 class AddTaskScreen extends StatelessWidget {
   @override
@@ -22,6 +22,7 @@ class AddTaskScreen extends StatelessWidget {
                   fontWeight: FontWeight.w500),
             ),
             TextField(
+              textInputAction: TextInputAction.none,
               autofocus: true,
               textAlign: TextAlign.center,
               onChanged: (value) {
@@ -31,10 +32,12 @@ class AddTaskScreen extends StatelessWidget {
             SizedBox(
               height: 10.0,
             ),
-            FlatButton(
-              color: Colors.lightBlueAccent,
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(primary: Colors.lightBlueAccent),
               onPressed: () {
-                Provider.of<TaskData>(context, listen: false).addTask(addtask!);
+                context
+                    .read<AddtaskBloc>()
+                    .add(addtaskevent(newtasktitle: addtask));
                 Navigator.pop(context);
               },
               child: Text(
